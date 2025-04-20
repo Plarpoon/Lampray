@@ -3,7 +3,6 @@ project(Lampray)
 
 set(CMAKE_CXX_STANDARD 17)
 
-
 option(USE_XDG_DIRECTORY "Use XDG directory to store data instead of the working directory" ON)
 
 add_executable(${PROJECT_NAME} main.cpp
@@ -20,8 +19,6 @@ add_executable(${PROJECT_NAME} main.cpp
         third-party/imgui/imstb_truetype.h
         third-party/json/json.hpp
         game-data/gameControl.h
-        third-party/l4z/lz4.c
-        third-party/l4z/lz4.h
         VERSION
         Lampray/Base/lampBase.h
         Lampray/Filesystem/lampFS.h
@@ -54,38 +51,47 @@ if(USE_XDG_DIRECTORY)
   target_compile_definitions(${PROJECT_NAME} PUBLIC USE_XDG)
 endif(USE_XDG_DIRECTORY)
 
-
-
 find_package(PkgConfig REQUIRED)
 
-target_link_libraries(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/third-party/bit7z/lib/x64/libbit7z64.a )
+target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/third-party/bit7z/lib/x64/libbit7z64.a )
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/third-party/bit7z/include/include/bit7z )
 
-target_link_libraries(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/third-party/nfd/lib/libnfd.a )
+target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/third-party/nfd/lib/libnfd.a )
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/third-party/nfd/include/include/nfd.h )
-
 
 # Find the SDL2 package
 find_package(SDL2 REQUIRED)
 
 # Include SDL2 headers
 include_directories(${SDL2_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES})
-
-#add_subdirectory(third-party/SDL2)
-#target_link_libraries(${PROJECT_NAME} SDL)
-
-#find_package(pugixml REQUIRED)
-#target_link_libraries(${PROJECT_NAME} pugixml::pugixml)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${SDL2_LIBRARIES})
 
 add_subdirectory(third-party/pugixml)
-target_link_libraries(${PROJECT_NAME} pugixml::pugixml)
+target_link_libraries(${PROJECT_NAME} PRIVATE pugixml::pugixml)
 
 find_package(CURL REQUIRED)
 include_directories(${CURL_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} ${CURL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${CURL_LIBRARIES})
 
+# ——————————————————————————
+# LZ4 via upstream CMake
+# ——————————————————————————
 
-target_link_libraries(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/third-party/l4z/liblz4.so)
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/third-party/l4z/)
+# 1) pull in the vendored lz4 CMake project (defines lz4::lz4)
+add_subdirectory(
+  ${CMAKE_SOURCE_DIR}/third-party/lz4/build/cmake
+  ${CMAKE_BINARY_DIR}/lz4-build
+  EXCLUDE_FROM_ALL
+)
 
+# 2) link your executable against it
+target_link_libraries(${PROJECT_NAME}
+  PRIVATE
+    lz4
+)
+
+# 3) export the lz4 headers so that #include <lz4xxx.h> works
+target_include_directories(${PROJECT_NAME}
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}/third-party/lz4/lib
+)
