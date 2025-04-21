@@ -53,11 +53,35 @@ endif(USE_XDG_DIRECTORY)
 
 find_package(PkgConfig REQUIRED)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/third-party/bit7z/lib/x64/libbit7z64.a )
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/third-party/bit7z/include/include/bit7z )
+# Include the bit7z package
+add_subdirectory(
+  ${CMAKE_SOURCE_DIR}/third-party/bit7z
+  ${CMAKE_BINARY_DIR}/bit7z-build
+  EXCLUDE_FROM_ALL
+)
+target_link_libraries(${PROJECT_NAME}
+  PRIVATE
+    bit7z
+)
+target_include_directories(${PROJECT_NAME}
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}/third-party/bit7z/lib
+)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/third-party/nfd/lib/libnfd.a )
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/third-party/nfd/include/include/nfd.h )
+# Include the nfd package
+add_library(nfd STATIC
+  third-party/nfd/src/nfd_common.c
+  third-party/nfd/src/nfd_cocoa.m
+)
+target_include_directories(nfd
+  PUBLIC ${CMAKE_SOURCE_DIR}/third-party/nfd/src/include
+)
+if(APPLE)
+  find_library(APPKIT_FRAMEWORK AppKit)
+  target_link_libraries(nfd PRIVATE ${APPKIT_FRAMEWORK})
+endif()
+target_link_libraries(${PROJECT_NAME} PRIVATE nfd)
+
 
 # Find the SDL2 package
 find_package(SDL2 REQUIRED)
@@ -73,24 +97,16 @@ find_package(CURL REQUIRED)
 include_directories(${CURL_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${CURL_LIBRARIES})
 
-# ——————————————————————————
-# LZ4 via upstream CMake
-# ——————————————————————————
-
-# 1) pull in the vendored lz4 CMake project (defines lz4::lz4)
+# Include the lz4 package
 add_subdirectory(
   ${CMAKE_SOURCE_DIR}/third-party/lz4/build/cmake
   ${CMAKE_BINARY_DIR}/lz4-build
   EXCLUDE_FROM_ALL
 )
-
-# 2) link your executable against it
 target_link_libraries(${PROJECT_NAME}
   PRIVATE
     lz4
 )
-
-# 3) export the lz4 headers so that #include <lz4xxx.h> works
 target_include_directories(${PROJECT_NAME}
   PRIVATE
     ${CMAKE_SOURCE_DIR}/third-party/lz4/lib

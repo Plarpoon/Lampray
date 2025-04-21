@@ -5,9 +5,9 @@
 #include <regex>
 #include "lampFS.h"
 #include "../Control/lampControl.h"
-#include "bit7zlibrary.hpp"
-#include "bitfilecompressor.hpp"
-#include "bitarchivewriter.hpp"
+#include <bit7z/bit7zlibrary.hpp>
+#include <bit7z/bitfilecompressor.hpp>
+#include <bit7z/bitarchivewriter.hpp>
 
 
 std::vector<Lamp::Core::Base::lampMod::Mod *> Lamp::Core::FS::lampIO::loadModList(Lamp::Core::FS::lampString game, Lamp::Core::FS::lampString profileNameS) {

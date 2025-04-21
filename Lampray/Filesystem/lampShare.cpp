@@ -5,12 +5,12 @@
 #include <climits>
 
 #include "lampFS.h"
-#include "../../third-party/nfd/include/nfd.h"
+#include <nfd.h>
 
 #include "../Control/lampGames.h"
-#include "bit7zlibrary.hpp"
-#include "bitfilecompressor.hpp"
-#include "bitarchivereader.hpp"
+#include <bit7z/bit7zlibrary.hpp>
+#include <bit7z/bitfilecompressor.hpp>
+#include <bit7z/bitarchivereader.hpp>
 #include "../Control/lampControl.h"
 
 bool Lamp::Core::FS::lampShare::compressFile(const std::string& inputFile, const std::string& outputFile) {
@@ -369,7 +369,12 @@ void Lamp::Core::FS::lampShare::exportProfile(std::string profileNameS) {
         InsertXMLintoFile( profileName + ".lampProfile", root);
 
         Lamp::Core::lampControl::getInstance().inDeployment = false;
-        Lamp::Core::Base::lampLog::getInstance().log("Profile Exported: " + absolute(fs::path( profileName + ".lampProfile")).string(),Base::lampLog::LOG,true);
+        Lamp::Core::Base::lampLog::getInstance().log(
+            "Profile Exported: " +
+            std::filesystem::absolute(std::filesystem::path(profileName + ".lampProfile")).string(),
+            Base::lampLog::LOG,
+            true
+        );
     }catch(std::exception e){
 
     }

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+mkdir ~/.local/share/lampray/Language
+
 BUILD_TYPE=${1:-Debug}
 
 cmake \
