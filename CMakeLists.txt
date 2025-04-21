@@ -82,7 +82,6 @@ if(APPLE)
 endif()
 target_link_libraries(${PROJECT_NAME} PRIVATE nfd)
 
-
 # Find the SDL2 package
 find_package(SDL2 REQUIRED)
 
@@ -90,8 +89,20 @@ find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${SDL2_LIBRARIES})
 
-add_subdirectory(third-party/pugixml)
-target_link_libraries(${PROJECT_NAME} PRIVATE pugixml::pugixml)
+# Include the pugixml package
+add_subdirectory(
+  ${CMAKE_SOURCE_DIR}/third-party/pugixml
+  ${CMAKE_BINARY_DIR}/pugixml-build
+  EXCLUDE_FROM_ALL
+)
+target_link_libraries(${PROJECT_NAME}
+  PRIVATE
+    pugixml
+)
+target_include_directories(${PROJECT_NAME}
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}/third-party/pugixml/lib
+)
 
 find_package(CURL REQUIRED)
 include_directories(${CURL_INCLUDE_DIRS})
