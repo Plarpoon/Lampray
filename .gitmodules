@@ -4,3 +4,12 @@
 [submodule "third-party/pugixml"]
 	path = third-party/pugixml
 	url = https://github.com/zeux/pugixml.git
+[submodule "third-party/nfd"]
+	path = third-party/nfd
+	url = https://github.com/mlabbe/nativefiledialog.git
+[submodule "third-party/lz4"]
+	path = third-party/lz4
+	url = https://github.com/lz4/lz4.git
+[submodule "third-party/bit7z"]
+	path = third-party/bit7z
+	url = https://github.com/rikyoz/bit7z.git
