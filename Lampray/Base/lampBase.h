@@ -10,7 +10,7 @@
 #include <utility>
 #include <vector>
 #include <sstream>
-#include "../../third-party/imgui/imgui.h"
+#include <imgui.h>
 #include "../Control/lampNotification.h"
 #include <iomanip>
 #include <functional>
@@ -25,19 +25,22 @@
 #include <queue>
 #include <fstream>
 
-namespace Lamp::Core::Base{
+namespace Lamp::Core::Base
+{
     /**
      * @brief A holding class for some of the Lampray framework's core types.
      *
      */
-    class lampTypes{
+    class lampTypes
+    {
     public:
         /**
-        * @brief A custom string class designed for use in the Lampray framework.
-        *
-        * This class provides custom functionality for string manipulation and conversion.
-        */
-        class lampString {
+         * @brief A custom string class designed for use in the Lampray framework.
+         *
+         * This class provides custom functionality for string manipulation and conversion.
+         */
+        class lampString
+        {
         private:
             std::string data; ///< The underlying std::string data.
 
@@ -54,7 +57,7 @@ namespace Lamp::Core::Base{
              *
              * @param str The C-style string to initialize the lampString with.
              */
-            lampString(const char* str) : data(str) {}
+            lampString(const char *str) : data(str) {}
 
             /**
              * @brief Constructs an empty lampString.
@@ -67,7 +70,8 @@ namespace Lamp::Core::Base{
              * @param other The C-style string to concatenate with.
              * @return A new lampString containing the concatenated result.
              */
-            lampString operator+(const char* other) const {
+            lampString operator+(const char *other) const
+            {
                 return {data + other};
             }
 
@@ -77,7 +81,8 @@ namespace Lamp::Core::Base{
              * @param other The lampString to concatenate with.
              * @return A new lampString containing the concatenated result.
              */
-            lampString operator+(const lampString& other) const {
+            lampString operator+(const lampString &other) const
+            {
                 return {data + other.data};
             }
 
@@ -88,7 +93,8 @@ namespace Lamp::Core::Base{
              * @param str2 The lampString to concatenate to the end.
              * @return A new lampString containing the concatenated result.
              */
-            friend lampString operator+(const std::string& str1, const lampString& str2) {
+            friend lampString operator+(const std::string &str1, const lampString &str2)
+            {
                 return {str1 + str2.data};
             }
 
@@ -98,7 +104,8 @@ namespace Lamp::Core::Base{
              * @param other The std::string to concatenate with.
              * @return A new lampString containing the concatenated result.
              */
-            lampString operator+(const std::string& other) const {
+            lampString operator+(const std::string &other) const
+            {
                 return {data + other};
             }
 
@@ -108,7 +115,8 @@ namespace Lamp::Core::Base{
              * @param other The C-style string to assign.
              * @return A reference to the modified lampString.
              */
-            lampString& operator=(const char* other) {
+            lampString &operator=(const char *other)
+            {
                 data = other;
                 return *this;
             }
@@ -119,7 +127,8 @@ namespace Lamp::Core::Base{
              * @param other The std::string to assign.
              * @return A reference to the modified lampString.
              */
-            lampString& operator=(const std::string& other) {
+            lampString &operator=(const std::string &other)
+            {
                 data = other;
                 return *this;
             }
@@ -130,10 +139,10 @@ namespace Lamp::Core::Base{
              * @param other The lampString to compare with.
              * @return true if this lampString is less than the other, false otherwise.
              */
-            bool operator<(const lampString& other) const {
+            bool operator<(const lampString &other) const
+            {
                 return data < other.data;
             }
-
 
             /**
              *  brief Custom equality operator for lampStrings
@@ -141,8 +150,9 @@ namespace Lamp::Core::Base{
              * @param other The lampString to compare with
              * @return true if the contents of the strings are the same, false otherwise.
              */
-            bool operator==(const lampString& other) const {
-              return data == other.data;
+            bool operator==(const lampString &other) const
+            {
+                return data == other.data;
             }
 
             /**
@@ -151,8 +161,9 @@ namespace Lamp::Core::Base{
              * @param the string to compare to
              * @return true if the contents of the strings are the same, fale otherwise.
              */
-            bool operator==(const char* other) const {
-              return data == other;
+            bool operator==(const char *other) const
+            {
+                return data == other;
             }
 
             /**
@@ -160,7 +171,8 @@ namespace Lamp::Core::Base{
              *
              * @return A C-style string representing the content of the lampString.
              */
-            operator const char*() const {
+            operator const char *() const
+            {
                 return data.c_str();
             }
 
@@ -169,7 +181,8 @@ namespace Lamp::Core::Base{
              *
              * @return A std::string representing the content of the lampString.
              */
-            operator std::string() const {
+            operator std::string() const
+            {
                 return data;
             }
 
@@ -178,7 +191,8 @@ namespace Lamp::Core::Base{
              *
              * @return A std::filesystem::path representing the content of the lampString.
              */
-            operator std::filesystem::path() const {
+            operator std::filesystem::path() const
+            {
                 return std::filesystem::path(data);
             };
 
@@ -189,7 +203,8 @@ namespace Lamp::Core::Base{
              *
              * @return true if the string is "1" or "true," false otherwise.
              */
-            bool as_bool() {
+            bool as_bool()
+            {
                 return (data == "1" || data == "true");
             }
 
@@ -198,17 +213,19 @@ namespace Lamp::Core::Base{
              *
              * @return  A pointer to the c-string representation of the lampString object's value.
              */
-            const char *c_str() const {
-                return static_cast<const char*>(*this);
+            const char *c_str() const
+            {
+                return static_cast<const char *>(*this);
             }
         };
 
         /**
-        * @brief A custom color class designed for use in the Lampray framework, representing a color with alpha (RGB-A).
-        *
-        * This class provides functionality to work with colors in RGBA format and supports conversion to/from hex strings.
-        */
-        class lampHexAlpha {
+         * @brief A custom color class designed for use in the Lampray framework, representing a color with alpha (RGB-A).
+         *
+         * This class provides functionality to work with colors in RGBA format and supports conversion to/from hex strings.
+         */
+        class lampHexAlpha
+        {
         public:
             /**
              * @brief Constructs a lampHexAlpha with the default color (black with full alpha).
@@ -220,14 +237,15 @@ namespace Lamp::Core::Base{
              *
              * @param color The ImVec4 color to initialize the lampHexAlpha with.
              */
-            lampHexAlpha(const ImVec4& color) : color_(color) {}
+            lampHexAlpha(const ImVec4 &color) : color_(color) {}
 
             /**
              * @brief Constructs a lampHexAlpha from a hex color string.
              *
              * @param hexColor The hex color string (e.g., "RRGGBB-AA") to initialize the lampHexAlpha with.
              */
-            lampHexAlpha(const std::string& hexColor) {
+            lampHexAlpha(const std::string &hexColor)
+            {
                 color_ = HexStringToImVec4(hexColor);
             }
 
@@ -236,7 +254,8 @@ namespace Lamp::Core::Base{
              *
              * @return An ImVec4 representing the color.
              */
-            operator ImVec4() const {
+            operator ImVec4() const
+            {
                 return color_;
             }
 
@@ -245,7 +264,8 @@ namespace Lamp::Core::Base{
              *
              * @return An ImU32 representing the color.
              */
-            operator ImU32() const {
+            operator ImU32() const
+            {
                 return ImGui::ColorConvertFloat4ToU32(color_);
             }
 
@@ -254,7 +274,8 @@ namespace Lamp::Core::Base{
              *
              * @return A hex color string (e.g., "RRGGBB-AA").
              */
-            operator std::string() const {
+            operator std::string() const
+            {
                 return ImVec4ToHexString(color_);
             }
 
@@ -267,7 +288,8 @@ namespace Lamp::Core::Base{
              * @param color The ImVec4 color to convert.
              * @return A hex color string in the format "RRGGBB-AA".
              */
-            std::string ImVec4ToHexString(const ImVec4& color) const {
+            std::string ImVec4ToHexString(const ImVec4 &color) const
+            {
                 int r = static_cast<int>(color.x * 255.0f);
                 int g = static_cast<int>(color.y * 255.0f);
                 int b = static_cast<int>(color.z * 255.0f);
@@ -288,9 +310,11 @@ namespace Lamp::Core::Base{
              * @param hexColor The hex color string in the format "RRGGBB-AA" to convert.
              * @return An ImVec4 color.
              */
-            ImVec4 HexStringToImVec4(const std::string& hexColor) const {
+            ImVec4 HexStringToImVec4(const std::string &hexColor) const
+            {
                 ImVec4 color = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
-                if (hexColor.size() >= 8) {
+                if (hexColor.size() >= 8)
+                {
                     // Split the hex string at the '-' delimiter
                     std::string rgbHex = hexColor.substr(0, 6);
                     std::string alphaHex = hexColor.substr(7, 2);
@@ -313,13 +337,14 @@ namespace Lamp::Core::Base{
         };
 
         /**
-        * @brief A custom class for representing return values with an associated reason.
-        *
-        * This class is designed for use in the Lampray framework to encapsulate return values along with an optional reason.
-        */
-        class lampReturn {
+         * @brief A custom class for representing return values with an associated reason.
+         *
+         * This class is designed for use in the Lampray framework to encapsulate return values along with an optional reason.
+         */
+        class lampReturn
+        {
         public:
-            int returnClause;      ///< The return clause indicating the outcome of an operation.
+            int returnClause;             ///< The return clause indicating the outcome of an operation.
             lampString returnReason = ""; ///< The optional return reason.
 
             /**
@@ -329,7 +354,7 @@ namespace Lamp::Core::Base{
              * @param returnReason The optional return reason as a lampString.
              */
             lampReturn(int returnClause, lampString returnReason)
-                    : returnClause(returnClause), returnReason(returnReason) {}
+                : returnClause(returnClause), returnReason(returnReason) {}
 
             /**
              * @brief Constructs a lampReturn with a return clause and no return reason.
@@ -348,7 +373,8 @@ namespace Lamp::Core::Base{
              *
              * @return true if the return clause is equal to 1, false otherwise.
              */
-            operator bool() const {
+            operator bool() const
+            {
                 return returnClause == 1;
             }
 
@@ -357,7 +383,8 @@ namespace Lamp::Core::Base{
              *
              * @return The return clause as an integer.
              */
-            operator int() const {
+            operator int() const
+            {
                 return returnClause;
             }
 
@@ -366,7 +393,8 @@ namespace Lamp::Core::Base{
              *
              * @return The return reason as a lampString.
              */
-            operator lampString() const {
+            operator lampString() const
+            {
                 return returnReason;
             }
 
@@ -375,17 +403,19 @@ namespace Lamp::Core::Base{
              *
              * @return The return reason as a std::string.
              */
-            operator std::string() const {
+            operator std::string() const
+            {
                 return static_cast<std::string>(returnReason);
             }
         };
 
         /**
-        * @brief A structure representing identification information for game control.
-        *
-        * This structure is used to provide readable and shorthand names for game identification purposes.
-        */
-        struct lampIdent {
+         * @brief A structure representing identification information for game control.
+         *
+         * This structure is used to provide readable and shorthand names for game identification purposes.
+         */
+        struct lampIdent
+        {
             lampTypes::lampString ReadableName; ///< A human-readable name for the game.
             lampTypes::lampString ShortHand;    ///< A shorthand or abbreviated name for the game.
 
@@ -396,21 +426,23 @@ namespace Lamp::Core::Base{
              * @param shortHand The shorthand or abbreviated name for the game.
              */
             lampIdent(lampTypes::lampString readableName, lampTypes::lampString shortHand)
-                    : ReadableName(readableName), ShortHand(shortHand) {}
+                : ReadableName(readableName), ShortHand(shortHand) {}
         };
     };
 
     /**
-    * @brief A class for managing game mods in the Lampray framework.
-    *
-    * This class provides functionality for managing and serializing game mods.
-    */
-    class lampMod {
+     * @brief A class for managing game mods in the Lampray framework.
+     *
+     * This class provides functionality for managing and serializing game mods.
+     */
+    class lampMod
+    {
     public:
         /**
          * @brief The Mod struct represents information about a mod.
          */
-        struct Mod {
+        struct Mod
+        {
         public:
             /**
              * @brief The path to the mod's archive.
@@ -438,7 +470,8 @@ namespace Lamp::Core::Base{
              * @param doc The parent XML node to which this Mod will be serialized.
              * @return The serialized XML node.
              */
-            pugi::xml_node serialize(pugi::xml_node doc) const {
+            pugi::xml_node serialize(pugi::xml_node doc) const
+            {
                 pugi::xml_node modNode = doc.append_child("Mod");
 
                 modNode.append_attribute("ArchivePath").set_value(ArchivePath);
@@ -457,14 +490,16 @@ namespace Lamp::Core::Base{
              * @param enabled Indicates whether the mod is enabled.
              */
             Mod(lampTypes::lampString archivePath, int modType, bool enabled)
-                    : ArchivePath(archivePath), modType(modType), enabled(enabled) {
+                : ArchivePath(archivePath), modType(modType), enabled(enabled)
+            {
             }
         };
 
         /**
          * @brief The Profile helper struct for managing profile-related operations.
          */
-        class Profile {
+        class Profile
+        {
         public:
             /**
              * @brief Adds a value to an input string, separated by a tilde (~) delimiter.
@@ -472,8 +507,10 @@ namespace Lamp::Core::Base{
              * @param inputString The input string to which the value will be added.
              * @param newValue The value to add to the input string.
              */
-            static void addValue(std::string& inputString, const std::string& newValue) {
-                if (!inputString.empty()) {
+            static void addValue(std::string &inputString, const std::string &newValue)
+            {
+                if (!inputString.empty())
+                {
                     inputString += "~";
                 }
                 inputString += newValue;
@@ -485,9 +522,11 @@ namespace Lamp::Core::Base{
              * @param inputString The input string from which the value will be removed.
              * @param valueToRemove The value to remove from the input string.
              */
-            static void removeValue(std::string& inputString, const std::string& valueToRemove) {
+            static void removeValue(std::string &inputString, const std::string &valueToRemove)
+            {
                 size_t pos = inputString.find(valueToRemove);
-                if (pos != std::string::npos) {
+                if (pos != std::string::npos)
+                {
                     // Remove the value and the preceding tilde
                     inputString.erase(pos - 1, valueToRemove.length() + 1);
                 }
@@ -499,12 +538,14 @@ namespace Lamp::Core::Base{
              * @param inputString The input string to split.
              * @return A vector of strings containing the split values.
              */
-            static std::vector<std::string> splitString(const std::string& inputString) {
+            static std::vector<std::string> splitString(const std::string &inputString)
+            {
                 std::vector<std::string> values;
                 std::istringstream iss(inputString);
                 std::string token;
 
-                while (std::getline(iss, token, '~')) {
+                while (std::getline(iss, token, '~'))
+                {
                     values.push_back(token);
                 }
 
@@ -514,31 +555,33 @@ namespace Lamp::Core::Base{
     };
 
     /**
-    * @brief A singleton class for logging messages and displaying warnings in the Lampray framework.
-    *
-    * This class provides a centralized logging system and a mechanism to display warning messages.
-    * It is implemented as a singleton to ensure a single instance throughout the application.
-    */
-    class lampLog {
+     * @brief A singleton class for logging messages and displaying warnings in the Lampray framework.
+     *
+     * This class provides a centralized logging system and a mechanism to display warning messages.
+     * It is implemented as a singleton to ensure a single instance throughout the application.
+     */
+    class lampLog
+    {
     public:
         /**
          * @brief Returns the singleton instance of the lampLog class.
          *
          * @return A reference to the singleton instance of the lampLog class.
          */
-        static lampLog& getInstance()
+        static lampLog &getInstance()
         {
             static lampLog instance;
             return instance;
         }
 
-        lampLog(lampLog const&) = delete;
-        void operator=(lampLog const&) = delete;
+        lampLog(lampLog const &) = delete;
+        void operator=(lampLog const &) = delete;
 
         /**
          * @brief Enumeration representing different warning levels for log messages.
          */
-        enum warningLevel {
+        enum warningLevel
+        {
             LOG,     ///< Log message.
             WARNING, ///< Warning message.
             ERROR    ///< Error message.
@@ -547,7 +590,8 @@ namespace Lamp::Core::Base{
         /**
          * @brief Enumeration representing error codes for log messages.
          */
-        enum errorCode {
+        enum errorCode
+        {
             LMP_UNK = 0,           ///< Unknown error.
             LMP_NODIRCREATION,     ///< Failed to create a directory.
             LMP_NO7ZP,             ///< 7-Zip executable not found.
@@ -564,8 +608,9 @@ namespace Lamp::Core::Base{
 
         std::list<std::string> poplist = {};
         // Passthrough log.
-        lampTypes::lampReturn pLog(lampTypes::lampReturn data,warningLevel warningLevel = warningLevel::LOG,bool pop = false, errorCode errorCode = errorCode::LMP_UNK){
-            log(data.returnReason,warningLevel,pop,errorCode);
+        lampTypes::lampReturn pLog(lampTypes::lampReturn data, warningLevel warningLevel = warningLevel::LOG, bool pop = false, errorCode errorCode = errorCode::LMP_UNK)
+        {
+            log(data.returnReason, warningLevel, pop, errorCode);
             return data;
         }
 
@@ -577,39 +622,44 @@ namespace Lamp::Core::Base{
          * @param pop Indicates whether the message should be displayed as a pop-up.
          * @param errorCode The error code associated with the message.
          */
-        void log(lampTypes::lampString data, warningLevel warningLevel = warningLevel::LOG, bool pop = false, errorCode errorCode = errorCode::LMP_UNK) {
+        void log(lampTypes::lampString data, warningLevel warningLevel = warningLevel::LOG, bool pop = false, errorCode errorCode = errorCode::LMP_UNK)
+        {
             lampTypes::lampString ping;
-            switch (warningLevel) {
-                case LOG:
-                    ping = "[LAMP:LOG:" + std::to_string(errorCode) + "] " + data;
-                    break;
-                case WARNING:
-                    ping = "[LAMP:WARNING:" + std::to_string(errorCode) + "] " + data;
-                    break;
-                case ERROR:
-                    ping = "[LAMP:ERROR:" + std::to_string(errorCode) + "] " + data;
-                    break;
+            switch (warningLevel)
+            {
+            case LOG:
+                ping = "[LAMP:LOG:" + std::to_string(errorCode) + "] " + data;
+                break;
+            case WARNING:
+                ping = "[LAMP:WARNING:" + std::to_string(errorCode) + "] " + data;
+                break;
+            case ERROR:
+                ping = "[LAMP:ERROR:" + std::to_string(errorCode) + "] " + data;
+                break;
             }
             std::cout << ping << std::endl;
 
             std::ofstream outputFile("lamp.log", std::ios::app);
-            if (outputFile) {
+            if (outputFile)
+            {
                 std::string lineToAdd = "This is a new line.";
                 outputFile << ping << std::endl;
                 outputFile.close();
             }
 
-            if (pop) {
-                switch (warningLevel) {
-                    case WARNING:
-                        Lamp::Core::lampNotification::getInstance().pushWarningNotification(ping);
-                        break;
-                    case ERROR:
-                        Lamp::Core::lampNotification::getInstance().pushErrorNotification(ping);
-                        break;
+            if (pop)
+            {
+                switch (warningLevel)
+                {
+                case WARNING:
+                    Lamp::Core::lampNotification::getInstance().pushWarningNotification(ping);
+                    break;
+                case ERROR:
+                    Lamp::Core::lampNotification::getInstance().pushErrorNotification(ping);
+                    break;
                 }
                 //  if(!lampConfig::getInstance().ShowIntroMenu) {
-                //poplist.push_front(ping);
+                // poplist.push_front(ping);
                 //    }
             }
         }
@@ -619,9 +669,12 @@ namespace Lamp::Core::Base{
          *
          * @return true if there are warnings to display, false otherwise.
          */
-        [[maybe_unused]] bool showWarns() {
-            for (auto it = poplist.begin(); it != poplist.end();) {
-                if (!poplist.empty()) {
+        [[maybe_unused]] bool showWarns()
+        {
+            for (auto it = poplist.begin(); it != poplist.end();)
+            {
+                if (!poplist.empty())
+                {
                     lampTypes::lampString x = *it;
                     ImGuiIO &io = ImGui::GetIO();
                     ImGui::SetNextWindowSize(io.DisplaySize, 0);
@@ -640,9 +693,12 @@ namespace Lamp::Core::Base{
                     ImGui::Separator();
 
                     ImGui::Text("If an error persists please create an issue on GitHub.");
-                    if (ImGui::Button("Okay")) {
+                    if (ImGui::Button("Okay"))
+                    {
                         poplist.erase(it);
-                    } else {
+                    }
+                    else
+                    {
                         ++it; // Move to the next element
                     }
 
@@ -661,12 +717,13 @@ namespace Lamp::Core::Base{
     };
 
     /**
-    * @brief A class for asynchronously executing code on a list of mods.
-    *
-    * The `lampExecutor` class allows you to execute a provided code function asynchronously on a list of mods.
-    * It keeps track of the total number of items and the count of finished items.
-    */
-    class lampExecutor {
+     * @brief A class for asynchronously executing code on a list of mods.
+     *
+     * The `lampExecutor` class allows you to execute a provided code function asynchronously on a list of mods.
+     * It keeps track of the total number of items and the count of finished items.
+     */
+    class lampExecutor
+    {
     public:
         /**
          * @brief Constructs a `lampExecutor` object with the provided code function.
@@ -675,8 +732,8 @@ namespace Lamp::Core::Base{
          */
         lampExecutor(std::function<void(const lampMod::Mod *)> code) : code_(code), itemCount(0), finishedCount(0) {}
 
-        int itemCount;          ///< The total number of items to execute.
-        int finishedCount;      ///< The count of items that have finished execution.
+        int itemCount;     ///< The total number of items to execute.
+        int finishedCount; ///< The count of items that have finished execution.
 
         /**
          * @brief Executes the provided code function on a list of mods asynchronously.
@@ -686,11 +743,14 @@ namespace Lamp::Core::Base{
          *
          * @param data The vector of mod pointers on which to execute the code.
          */
-        void execute(const std::vector<lampMod::Mod *>& data, bool detach) {
+        void execute(const std::vector<lampMod::Mod *> &data, bool detach)
+        {
             lampLog::getInstance().log("ModList Executor: Starting", lampLog::warningLevel::LOG);
             itemCount = data.size();
-                for (const lampMod::Mod *item: data) {
-                    std::thread t([this, item]() {
+            for (const lampMod::Mod *item : data)
+            {
+                std::thread t([this, item]()
+                              {
                         if (code_) {
                             code_(item);
                         }
@@ -698,14 +758,16 @@ namespace Lamp::Core::Base{
                             std::unique_lock<std::mutex> lock(mutex_);
                             finishedCount++;
                         }
-                        condition_.notify_all();
-                    });
-                    if(detach) {
-                        t.detach();
-                    }else{
-                        t.join();
-                    }
+                        condition_.notify_all(); });
+                if (detach)
+                {
+                    t.detach();
                 }
+                else
+                {
+                    t.join();
+                }
+            }
             waitForCompletion();
         }
 
@@ -714,26 +776,27 @@ namespace Lamp::Core::Base{
          *
          * This method blocks until all asynchronous executions have finished.
          */
-        void waitForCompletion() {
+        void waitForCompletion()
+        {
             std::unique_lock<std::mutex> lock(mutex_);
-            condition_.wait(lock, [this]() {
-                return finishedCount == itemCount;
-            });
+            condition_.wait(lock, [this]()
+                            { return finishedCount == itemCount; });
         }
 
     private:
-        std::function<void(const lampMod::Mod *)> code_;  ///< The code function to execute.
-        std::mutex mutex_;                                ///< Mutex for thread synchronization.
-        std::condition_variable condition_;               ///< Condition variable for thread synchronization.
+        std::function<void(const lampMod::Mod *)> code_; ///< The code function to execute.
+        std::mutex mutex_;                               ///< Mutex for thread synchronization.
+        std::condition_variable condition_;              ///< Condition variable for thread synchronization.
     };
 
     /**
-    * @brief A utility class for sequencing and executing lambda expressions in named queues.
-    *
-    * The `LampSequencer` class allows you to add lambda expressions to named queues and execute them sequentially.
-    * It logs the results of the execution, including success, failure, and critical failure.
-    */
-    class LampSequencer {
+     * @brief A utility class for sequencing and executing lambda expressions in named queues.
+     *
+     * The `LampSequencer` class allows you to add lambda expressions to named queues and execute them sequentially.
+     * It logs the results of the execution, including success, failure, and critical failure.
+     */
+    class LampSequencer
+    {
     public:
         /**
          * @brief Adds a lambda expression to the specified queue.
@@ -741,7 +804,8 @@ namespace Lamp::Core::Base{
          * @param queueName The name of the queue to which the lambda should be added.
          * @param lambda The lambda expression to be added to the queue.
          */
-        static void add(const std::string& queueName, std::function<lampTypes::lampReturn()> lambda) {
+        static void add(const std::string &queueName, std::function<lampTypes::lampReturn()> lambda)
+        {
             getQueue(queueName).push(lambda);
         }
 
@@ -754,16 +818,19 @@ namespace Lamp::Core::Base{
          * @param queueName The name of the queue to run.
          * @return A lampReturn object indicating the overall result of the execution.
          */
-        static lampTypes::lampReturn run(const std::string& queueName) {
-            lampLog::getInstance().log("Queue '"+queueName+"': Starting", lampLog::warningLevel::LOG);
+        static lampTypes::lampReturn run(const std::string &queueName)
+        {
+            lampLog::getInstance().log("Queue '" + queueName + "': Starting", lampLog::warningLevel::LOG);
             lampTypes::lampReturn result;
-            while (!getQueue(queueName).empty()) {
+            while (!getQueue(queueName).empty())
+            {
                 std::function<lampTypes::lampReturn()> lambda = getQueue(queueName).front();
                 getQueue(queueName).pop();
                 result = lambda();
                 logResult(queueName, result);
-                if (result.returnClause == -1 || result.returnClause == 0) {
-                    break;  // Stop execution on critical failure
+                if (result.returnClause == -1 || result.returnClause == 0)
+                {
+                    break; // Stop execution on critical failure
                 }
             }
             return result;
@@ -778,7 +845,8 @@ namespace Lamp::Core::Base{
          * @param queueName The name of the queue to retrieve.
          * @return A reference to the queue associated with the provided name.
          */
-        static std::queue<std::function<lampTypes::lampReturn()>>& getQueue(const std::string& queueName) {
+        static std::queue<std::function<lampTypes::lampReturn()>> &getQueue(const std::string &queueName)
+        {
             static std::unordered_map<std::string, std::queue<std::function<lampTypes::lampReturn()>>> queues;
             return queues[queueName];
         }
@@ -791,80 +859,101 @@ namespace Lamp::Core::Base{
          * @param queueName The name of the queue.
          * @param result The result of lambda execution.
          */
-        static void logResult(const std::string& queueName, const lampTypes::lampReturn& result) {
+        static void logResult(const std::string &queueName, const lampTypes::lampReturn &result)
+        {
             std::string logMessage = "Queue '" + queueName + "': ";
-            if (result.returnClause == 0) {
+            if (result.returnClause == 0)
+            {
                 logMessage += "Failed - " + (std::string)result.returnReason;
                 lampLog::getInstance().log(logMessage, lampLog::warningLevel::ERROR, true);
-            } else if (result.returnClause == 1) {
+            }
+            else if (result.returnClause == 1)
+            {
                 logMessage += "Success";
                 lampLog::getInstance().log(logMessage, lampLog::warningLevel::LOG);
-            } else if (result.returnClause == -1) {
+            }
+            else if (result.returnClause == -1)
+            {
                 logMessage += "Critically Failed - " + (std::string)result.returnReason;
                 lampLog::getInstance().log(logMessage, lampLog::warningLevel::ERROR, true);
             }
         }
     };
 
-    class OverlayBuilder{
+    class OverlayBuilder
+    {
         std::vector<std::string> lowerPaths;
         std::string configPath;
         std::string gameTargetPath;
 
         std::string removeCommand;
         std::string buildCommand;
+
     public:
-        lampTypes::lampReturn addPath(std::string path){
+        lampTypes::lampReturn addPath(std::string path)
+        {
             std::filesystem::path p(path);
-            if(std::filesystem::is_directory(p)){
+            if (std::filesystem::is_directory(p))
+            {
                 lowerPaths.push_back(p);
-                return{1, "Added path."};
-            }else{
-                return{0, "Path is not a valid directory"};
+                return {1, "Added path."};
             }
-
+            else
+            {
+                return {0, "Path is not a valid directory"};
+            }
         }
 
-        lampTypes::lampReturn create(std::string gameTarget, std::string configTarget, std::string workingTarget){
-                std::filesystem::path gamePath(gameTarget);
-                std::filesystem::path configPath(configTarget);
-                if(std::filesystem::exists(workingTarget) && std::filesystem::is_directory(workingTarget) && std::filesystem::exists(gamePath) && std::filesystem::is_directory(gamePath) && std::filesystem::exists(configPath) && std::filesystem::is_directory(configPath) ){
-                    // Rename the games folder and store a copy of the original name to be used for the merge.
-                    std::string managedString = std::string("Lampray Managed - ") + gamePath.filename().string();
-                    std::filesystem::path MergedPath = gamePath.parent_path() / managedString;
-                    std::filesystem::rename(gamePath, MergedPath);
-                    std::filesystem::create_directories(gamePath);
+        lampTypes::lampReturn create(std::string gameTarget, std::string configTarget, std::string workingTarget)
+        {
+            std::filesystem::path gamePath(gameTarget);
+            std::filesystem::path configPath(configTarget);
+            if (std::filesystem::exists(workingTarget) && std::filesystem::is_directory(workingTarget) && std::filesystem::exists(gamePath) && std::filesystem::is_directory(gamePath) && std::filesystem::exists(configPath) && std::filesystem::is_directory(configPath))
+            {
+                // Rename the games folder and store a copy of the original name to be used for the merge.
+                std::string managedString = std::string("Lampray Managed - ") + gamePath.filename().string();
+                std::filesystem::path MergedPath = gamePath.parent_path() / managedString;
+                std::filesystem::rename(gamePath, MergedPath);
+                std::filesystem::create_directories(gamePath);
 
-                    // Build the command
-                    std::string command;
-                    command+= "pkexec mount -t overlay overlay -o ";
-                    command+= "lowerdir=\""+MergedPath.string()+":";
-                    // build the lowerdir
-                    if(!lowerPaths.empty()){
-                        command += lowerPaths[0];
-                        for(size_t i = 1; i < lowerPaths.size(); i++){
-                            command+=":"+lowerPaths[i];
-                        }
-                    }else{
-                        return{0, "No mod paths have been added."};
+                // Build the command
+                std::string command;
+                command += "pkexec mount -t overlay overlay -o ";
+                command += "lowerdir=\"" + MergedPath.string() + ":";
+                // build the lowerdir
+                if (!lowerPaths.empty())
+                {
+                    command += lowerPaths[0];
+                    for (size_t i = 1; i < lowerPaths.size(); i++)
+                    {
+                        command += ":" + lowerPaths[i];
                     }
-                    command+="\",upperdir=\""+configTarget;
-                    command+="\",workdir=\""+workingTarget;
-                    command+="\" \""+gameTarget+"\"";
-                   // return {1, command};
-                    // Execute it
-
-                    int result = system(command.c_str());
-                    if(result == 0){
-                        return {1, "Command successfully executed"};
-                    }else{
-                        return {0, "Command aborted"};
-                    }
-                }else{
-                    return{0, "Unable to create overlay, Targets Invalid."};
                 }
-        }
+                else
+                {
+                    return {0, "No mod paths have been added."};
+                }
+                command += "\",upperdir=\"" + configTarget;
+                command += "\",workdir=\"" + workingTarget;
+                command += "\" \"" + gameTarget + "\"";
+                // return {1, command};
+                // Execute it
 
+                int result = system(command.c_str());
+                if (result == 0)
+                {
+                    return {1, "Command successfully executed"};
+                }
+                else
+                {
+                    return {0, "Command aborted"};
+                }
+            }
+            else
+            {
+                return {0, "Unable to create overlay, Targets Invalid."};
+            }
+        }
     };
 }
-#endif //LAMP_LAMPBASE_H
+#endif // LAMP_LAMPBASE_H

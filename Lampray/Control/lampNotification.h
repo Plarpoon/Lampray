@@ -10,20 +10,21 @@
 #include <algorithm>
 #include <string>
 #include <array>
-#include "../../third-party/imgui/imgui.h"
+#include <imgui.h>
 
-
-namespace Lamp::Core{
-    class lampNotification{
+namespace Lamp::Core
+{
+    class lampNotification
+    {
     public:
-
-        static lampNotification& getInstance()
+        static lampNotification &getInstance()
         {
             static lampNotification instance;
             return instance;
         }
 
-        struct NotificationColors{
+        struct NotificationColors
+        {
             ImColor notificationBG;
             ImColor notificationBGHover;
         };
@@ -52,25 +53,29 @@ namespace Lamp::Core{
         // scale notifications about 25% larger than the rest of the content
         float notificationScale = 1.25f;
 
-        void DisplayNotifications(){
-            ImGuiStyle& imStyle = ImGui::GetStyle();
+        void DisplayNotifications()
+        {
+            ImGuiStyle &imStyle = ImGui::GetStyle();
 
             int outerindex = 0;
-            for (auto it = this->notifications.begin(); it != this->notifications.end(); ++it) {
+            for (auto it = this->notifications.begin(); it != this->notifications.end(); ++it)
+            {
                 // get the coloring for this notification type
                 NotificationColors notifColors = this->getNotificationColors(outerindex);
 
-                if(this->notifications[outerindex].size() > 0){
+                if (this->notifications[outerindex].size() > 0)
+                {
                     ImGui::PushStyleColor(ImGuiCol_ChildBg, notifColors.notificationBG.Value);
                     ImGui::PushStyleColor(ImGuiCol_HeaderHovered, notifColors.notificationBGHover.Value);
 
                     ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.0f)); // center-align text
 
-                    std::string NOTIF_BAR_CONTAINER_ID = "NotificationBar_" + outerindex;
-                    ImGui::BeginChild(NOTIF_BAR_CONTAINER_ID.c_str(), ImVec2(ImGui::GetContentRegionAvail().x, 0.0f), ImGuiChildFlags_AutoResizeY);
+                    std::string NOTIF_BAR_CONTAINER_ID = "NotificationBar_" + std::to_string(outerindex);
+                    ImGui::BeginChild(NOTIF_BAR_CONTAINER_ID.c_str(), ImVec2(ImGui::GetContentRegionAvail().x, 0.0f), 0);
 
                     ImGui::SetWindowFontScale(this->notificationScale);
-                    for (auto itt = (*it).begin(); itt != (*it).end(); ++itt) {
+                    for (auto itt = (*it).begin(); itt != (*it).end(); ++itt)
+                    {
                         std::string wrappedText = (*itt);
                         auto spaceAvail = ImGui::GetContentRegionAvail().x;
                         auto spaceNeeded = ImGui::CalcTextSize(wrappedText.c_str()).x;
@@ -78,7 +83,8 @@ namespace Lamp::Core{
                         // attempt to manually wrap the text for long messages
                         wrappedText = this->manuallyWrapText(wrappedText);
 
-                        if(ImGui::Selectable(wrappedText.c_str())){
+                        if (ImGui::Selectable(wrappedText.c_str()))
+                        {
                             this->clearNotification(outerindex, itt);
                             // go back 1 iteration as we just removed this item. Prevents a crash when clearning a notification.
                             itt--;
@@ -94,28 +100,42 @@ namespace Lamp::Core{
             }
         }
 
-        void pushInfoNotification(std::string message, bool oneTime = false){
+        void pushInfoNotification(std::string message, bool oneTime = false)
+        {
             this->addNotification(INFO, message, oneTime);
         }
-        void pushSuccessNotification(std::string message, bool oneTime = false){
+        void pushSuccessNotification(std::string message, bool oneTime = false)
+        {
             this->addNotification(SUCCESS, message, oneTime);
         }
-        void pushWarningNotification(std::string message, bool oneTime = false){
+        void pushWarningNotification(std::string message, bool oneTime = false)
+        {
             this->addNotification(WARNING, message, oneTime);
         }
-        void pushErrorNotification(std::string message, bool oneTime = false){
+        void pushErrorNotification(std::string message, bool oneTime = false)
+        {
             this->addNotification(ERROR, message, oneTime);
         }
-        void pushNotification(std::string notiftype, std::string message, bool oneTime = false){
-            if(notiftype == "info"){
+        void pushNotification(std::string notiftype, std::string message, bool oneTime = false)
+        {
+            if (notiftype == "info")
+            {
                 this->pushInfoNotification(message, oneTime);
-            } else if(notiftype == "warning"){
+            }
+            else if (notiftype == "warning")
+            {
                 this->pushWarningNotification(message, oneTime);
-            } else if(notiftype == "error"){
+            }
+            else if (notiftype == "error")
+            {
                 this->pushErrorNotification(message, oneTime);
-            } else if(notiftype == "success"){
+            }
+            else if (notiftype == "success")
+            {
                 this->pushSuccessNotification(message, oneTime);
-            } else{
+            }
+            else
+            {
                 std::cout << "Invalid notification type given: " << notiftype << "\n";
             }
         }
@@ -123,7 +143,8 @@ namespace Lamp::Core{
     private:
         // NOTE: Do not customize the values as it will break init/display logic
         // (re-ordering everything except the NOTIFTYPE_END_PLACEHOLDER is fine)
-        enum NotificationTypes{
+        enum NotificationTypes
+        {
             INFO,
             SUCCESS,
             WARNING,
@@ -132,7 +153,8 @@ namespace Lamp::Core{
             NOTIFTYPE_END_PLACEHOLDER, // used for initializations. KEEP THIS AT THE END
         };
 
-        std::array<NotificationColors, NOTIFTYPE_END_PLACEHOLDER> initNotificationColors(){
+        std::array<NotificationColors, NOTIFTYPE_END_PLACEHOLDER> initNotificationColors()
+        {
             std::array<NotificationColors, NOTIFTYPE_END_PLACEHOLDER> colArray = {};
             colArray[INFO] = InfoTypeColors;
             colArray[SUCCESS] = SuccessTypeColors;
@@ -147,44 +169,51 @@ namespace Lamp::Core{
         // oneTimeNotifications are notifications that should only be displayed once per session (we do not keep track between sessions)
         std::vector<std::string> oneTimeNotifications;
 
-        void addNotification(int notiftype, std::string message, bool oneTime = false){
-            if((std::find(this->oneTimeNotifications.begin(), this->oneTimeNotifications.end(), message) != this->oneTimeNotifications.end())){
+        void addNotification(int notiftype, std::string message, bool oneTime = false)
+        {
+            if ((std::find(this->oneTimeNotifications.begin(), this->oneTimeNotifications.end(), message) != this->oneTimeNotifications.end()))
+            {
                 // we have already seen this oneTime notification, so do not try to display it again
                 return;
             }
 
-            if(oneTime && (std::find(this->oneTimeNotifications.begin(), this->oneTimeNotifications.end(), message) == this->oneTimeNotifications.end())){
+            if (oneTime && (std::find(this->oneTimeNotifications.begin(), this->oneTimeNotifications.end(), message) == this->oneTimeNotifications.end()))
+            {
                 this->oneTimeNotifications.push_back(message);
             }
 
             // avoid adding duplicate notifications
-            if(std::find(this->notifications[notiftype].begin(), this->notifications[notiftype].end(), message) == this->notifications[notiftype].end()){
+            if (std::find(this->notifications[notiftype].begin(), this->notifications[notiftype].end(), message) == this->notifications[notiftype].end())
+            {
                 this->notifications[notiftype].push_back(message);
             }
         }
-        void clearNotification(int notiftype, std::vector<std::string>::iterator item){
+        void clearNotification(int notiftype, std::vector<std::string>::iterator item)
+        {
             this->notifications[notiftype].erase(item);
         }
-
 
         // first element is background, second is background hover (TODO: Better way to store these)
         std::array<NotificationColors, NOTIFTYPE_END_PLACEHOLDER> notificationColorValues = initNotificationColors();
 
-        NotificationColors getNotificationColors(int notificationType){
+        NotificationColors getNotificationColors(int notificationType)
+        {
             // if not in that array, return default colors
-            if(notificationType < 0 || notificationType >= this->notificationColorValues.size()){
+            if (notificationType < 0 || notificationType >= this->notificationColorValues.size())
+            {
                 return DefaultTypeColors;
             }
 
             return this->notificationColorValues[notificationType];
         }
 
-
-        std::string manuallyWrapText(std::string textToWrap){
+        std::string manuallyWrapText(std::string textToWrap)
+        {
             auto spaceAvail = ImGui::GetContentRegionAvail().x;
             auto spaceNeeded = ImGui::CalcTextSize(textToWrap.c_str()).x;
             // no wrapping needed
-            if(spaceNeeded < spaceAvail){
+            if (spaceNeeded < spaceAvail)
+            {
                 return textToWrap;
             }
 
@@ -194,11 +223,13 @@ namespace Lamp::Core{
             int prevspace = textToWrap.rfind(" ", charsThatFit);
 
             // calculate the spots to try to wrap at... NOTE: This does not work if there are not well palced spaces!
-            for(auto i = charsThatFit; i < textToWrap.size(); i+= charsThatFit){
+            for (auto i = charsThatFit; i < textToWrap.size(); i += charsThatFit)
+            {
                 prevspace = textToWrap.rfind(" ", i);
 
                 // if we got a repeat prevspace, we are looping the same stuff
-                if(std::find(spacesToWrapAt.begin(), spacesToWrapAt.end(), prevspace) != spacesToWrapAt.end()){
+                if (std::find(spacesToWrapAt.begin(), spacesToWrapAt.end(), prevspace) != spacesToWrapAt.end())
+                {
                     // we are looping, so just add a wrap anyway to continue...
                     prevspace = i;
                 }
@@ -209,14 +240,18 @@ namespace Lamp::Core{
 
             int offsetForInserts = 0;
             // add newlines to manually wrap the text
-            for(auto it = spacesToWrapAt.begin(); it != spacesToWrapAt.end(); ++it){
+            for (auto it = spacesToWrapAt.begin(); it != spacesToWrapAt.end(); ++it)
+            {
                 int strpos = (*it) + offsetForInserts;
                 std::string spaceCheckString;
                 spaceCheckString += textToWrap.at(strpos);
 
-                if(spaceCheckString == " "){
+                if (spaceCheckString == " ")
+                {
                     textToWrap.replace(strpos, 1, "\n");
-                } else{
+                }
+                else
+                {
                     // character was not a space, so insert instead of replace
                     textToWrap.insert(strpos, "\n");
                     offsetForInserts += 1;
@@ -227,4 +262,4 @@ namespace Lamp::Core{
         }
     };
 }
-#endif //LAMP_LAMPNOTIFICATION_H
+#endif // LAMP_LAMPNOTIFICATION_H

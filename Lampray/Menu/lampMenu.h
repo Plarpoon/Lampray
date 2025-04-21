@@ -5,14 +5,17 @@
 #ifndef LAMP_LAMPMENU_H
 #define LAMP_LAMPMENU_H
 
-#include "../../third-party/imgui/imgui.h"
+#include <imgui.h>
 #include "../Filesystem/lampFS.h"
 #include "../Control/lampGames.h"
 #include "../Control/lampControl.h"
-namespace Lamp::Core{
-    class lampMenu{
+namespace Lamp::Core
+{
+    class lampMenu
+    {
     public:
-        enum Menus{
+        enum Menus
+        {
             LICENCE_MENU,
             GAME_MOD_MENU,
             GAME_CONFIG_MENU,
@@ -25,7 +28,6 @@ namespace Lamp::Core{
         void RunMenus();
 
     private:
-
         char profileBuffer[250]{};
 
         bool deployCheck = false;
@@ -40,4 +42,4 @@ namespace Lamp::Core{
         void DefaultMenuBar();
     };
 }
-#endif //LAMP_LAMPMENU_H
+#endif // LAMP_LAMPMENU_H

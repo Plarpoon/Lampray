@@ -1,7 +1,7 @@
 #include "Lampray/Control/lampConfig.h"
-#include "third-party/imgui/imgui.h"
-#include "third-party/imgui/imgui_impl_sdl2.h"
-#include "third-party/imgui/imgui_impl_sdlrenderer2.h"
+#include <imgui.h>
+#include <imgui_impl_sdl2.h>
+#include <imgui_impl_sdlrenderer2.h>
 #include "Lampray/Lang/lampLang.h"
 #include "Lampray/Control/lampControl.h"
 #include "Lampray/Menu/lampMenu.h"
@@ -11,12 +11,12 @@
 
 #include "Lampray/Control/lampNotification.h"
 
-#if !SDL_VERSION_ATLEAST(2,0,17)
+#if !SDL_VERSION_ATLEAST(2, 0, 17)
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
 #endif
 
 // Main code
-int main(int, char**)
+int main(int, char **)
 {
     // Setup SDL
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
@@ -31,8 +31,8 @@ int main(int, char**)
 #endif
 
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    SDL_Window* window = SDL_CreateWindow("Lampray", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+    SDL_Window *window = SDL_CreateWindow("Lampray", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
     if (renderer == nullptr)
     {
         SDL_Log("Error creating SDL_Renderer!");
@@ -41,9 +41,10 @@ int main(int, char**)
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    ImGuiIO &io = ImGui::GetIO();
+    (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
 
     ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
     ImGui_ImplSDLRenderer2_Init(renderer);
@@ -51,9 +52,12 @@ int main(int, char**)
     auto fontFolder = Lamp::Core::lampConfig::getInstance().baseDataPath + "Fonts/";
 
     // Check if the "Font" folder exists
-    if (std::filesystem::is_directory(fontFolder)) {
-        for (const auto& entry : std::filesystem::directory_iterator(fontFolder)) {
-            if (entry.is_regular_file() && entry.path().extension() == ".ttf") {
+    if (std::filesystem::is_directory(fontFolder))
+    {
+        for (const auto &entry : std::filesystem::directory_iterator(fontFolder))
+        {
+            if (entry.is_regular_file() && entry.path().extension() == ".ttf")
+            {
                 io.Fonts->AddFontFromFileTTF(entry.path().string().c_str(), 16.0f);
                 break;
             }
@@ -63,20 +67,19 @@ int main(int, char**)
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     std::string preferredLanguage = Lamp::Core::FS::lampIO::loadKeyData("LanguagePath", "LAMP CONFIG");
-    Lamp::Core::lampLang::getInstance().CurrentLanguage = Lamp::Core::lampLang::LanguageContainer(); 
-    
+    Lamp::Core::lampLang::getInstance().CurrentLanguage = Lamp::Core::lampLang::LanguageContainer();
+
     auto languageLoaded = Lamp::Core::lampLang::getInstance()
-                          .CurrentLanguage.build(preferredLanguage);
+                              .CurrentLanguage.build(preferredLanguage);
     Lamp::Core::Base::lampLog::getInstance().log(languageLoaded.returnReason);
-    if(!languageLoaded) {
+    if (!languageLoaded)
+    {
         auto path = Lamp::Core::lampLang::getInstance().createEnglishUK();
         Lamp::Core::Base::lampLog::getInstance().log(
-          Lamp::Core::lampLang::getInstance()
-            .CurrentLanguage.build(path)
-              .returnReason);
+            Lamp::Core::lampLang::getInstance()
+                .CurrentLanguage.build(path)
+                .returnReason);
     }
-
-
 
     Lamp::Core::lampControl::getInstance().Colour_SearchHighlight = Lamp::Core::Base::lampTypes::lampHexAlpha(Lamp::Core::lampCustomise::getInstance().defaultColours[13]);
     ImGui::GetStyle().Colors[ImGuiCol_Text] = Lamp::Core::Base::lampTypes::lampHexAlpha(Lamp::Core::lampCustomise::getInstance().defaultColours[0]);
@@ -91,11 +94,12 @@ int main(int, char**)
     ImGui::GetStyle().Colors[ImGuiCol_Header] = Lamp::Core::Base::lampTypes::lampHexAlpha(Lamp::Core::lampCustomise::getInstance().defaultColours[8]);
     ImGui::GetStyle().Colors[ImGuiCol_HeaderHovered] = Lamp::Core::Base::lampTypes::lampHexAlpha(Lamp::Core::lampCustomise::getInstance().defaultColours[9]);
     ImGui::GetStyle().Colors[ImGuiCol_HeaderActive] = Lamp::Core::Base::lampTypes::lampHexAlpha(Lamp::Core::lampCustomise::getInstance().defaultColours[10]);
-	ImGui::GetStyle().Colors[ImGuiCol_Separator] = Lamp::Core::Base::lampTypes::lampHexAlpha(Lamp::Core::lampCustomise::getInstance().defaultColours[11]);
+    ImGui::GetStyle().Colors[ImGuiCol_Separator] = Lamp::Core::Base::lampTypes::lampHexAlpha(Lamp::Core::lampCustomise::getInstance().defaultColours[11]);
     ImGui::GetStyle().Colors[ImGuiCol_SeparatorHovered] = Lamp::Core::Base::lampTypes::lampHexAlpha(Lamp::Core::lampCustomise::getInstance().defaultColours[12]);
 
-    std::string PreviousGame = Lamp::Core::FS::lampIO::loadKeyData("PreviousGame","LAMP CONFIG");
-    if(PreviousGame != "") {
+    std::string PreviousGame = Lamp::Core::FS::lampIO::loadKeyData("PreviousGame", "LAMP CONFIG");
+    if (PreviousGame != "")
+    {
         Lamp::Games::getInstance().currentGameInt = std::stoi(PreviousGame);
         Lamp::Games::getInstance().currentGame = Lamp::Games::getInstance().gameList[Lamp::Games::getInstance().currentGameInt];
     }
@@ -103,29 +107,33 @@ int main(int, char**)
     Lamp::Core::Base::lampLog::getInstance().log("Clearing log file.");
     const std::string filename = "lamp.log";
     std::ofstream file(filename, std::ios::trunc);
-    if (!file) {
+    if (!file)
+    {
         file.close();
         Lamp::Core::Base::lampLog::getInstance().log("Couldn't clear the Log.");
     }
     file.close();
 
-    Lamp::Core::Base::lampLog::getInstance().log(Lamp::Core::lampControl::getFormattedTimeAndDate()+" | | Battle Control Online, Welcome Back Commander.", Lamp::Core::Base::lampLog::LOG);
+    Lamp::Core::Base::lampLog::getInstance().log(Lamp::Core::lampControl::getFormattedTimeAndDate() + " | | Battle Control Online, Welcome Back Commander.", Lamp::Core::Base::lampLog::LOG);
     Lamp::Core::Base::lampLog::getInstance().log("Lampray version: " + Lamp::Core::FS::lampUpdate::getInstance().versionNumber);
 
     Lamp::Games::getInstance();
 
     std::string loadedCheckUpdates = Lamp::Core::FS::lampIO::loadKeyData("Check_Updates_Startup", "LAMP CONFIG");
     bool checkForUpdates = true;
-    if(loadedCheckUpdates == "0" || loadedCheckUpdates == "false"){
+    if (loadedCheckUpdates == "0" || loadedCheckUpdates == "false")
+    {
         checkForUpdates = false;
     }
-    if(checkForUpdates){
+    if (checkForUpdates)
+    {
         Lamp::Core::FS::lampUpdate::getInstance().checkForUpdates();
     }
-    Lamp::Core::lampConfig::getInstance().lampFlags["showIntroMenu"]=(std::string)Lamp::Core::FS::lampIO::loadKeyData("showIntroMenu","LAMP CONFIG").returnReason;
-    Lamp::Core::lampConfig::getInstance().bit7zLibraryLocation = (std::string)Lamp::Core::FS::lampIO::loadKeyData("bit7zLibraryLocation","LAMP CONFIG").returnReason;
+    Lamp::Core::lampConfig::getInstance().lampFlags["showIntroMenu"] = (std::string)Lamp::Core::FS::lampIO::loadKeyData("showIntroMenu", "LAMP CONFIG").returnReason;
+    Lamp::Core::lampConfig::getInstance().bit7zLibraryLocation = (std::string)Lamp::Core::FS::lampIO::loadKeyData("bit7zLibraryLocation", "LAMP CONFIG").returnReason;
     bool found7z = Lamp::Core::lampConfig::getInstance().init();
-    if(!found7z){
+    if (!found7z)
+    {
         Lamp::Core::lampNotification::getInstance().pushErrorNotification(Lamp::Core::lampLang::getInstance().LS("LAMPRAY_ERROR_7Z"));
     }
     Lamp::Core::FS::lampIO::saveKeyData("bit7zLibraryLocation", Lamp::Core::lampConfig::getInstance().bit7zLibraryLocation, "LAMP CONFIG");
@@ -133,33 +141,37 @@ int main(int, char**)
     Lamp::Core::lampMenu Menus;
     // This is a very inefficent way of doing this.
 
-
     Lamp::Games::getInstance().currentProfile = Lamp::Games::getInstance().currentGame->KeyInfo()["CurrentProfile"];
 
     // Try to load and set the global font scale. I am pretty sure this is not a good way of doing this...
     std::string loadedFontScale = Lamp::Core::FS::lampIO::loadKeyData("Font_Scale", "LAMP CONFIG");
-    if(loadedFontScale != ""){
+    if (loadedFontScale != "")
+    {
         io.FontGlobalScale = std::stof(loadedFontScale);
     }
 
     Lamp::Core::Base::lampLog::getInstance().log("Creating Directories");
-    try {
+    try
+    {
         std::filesystem::create_directories(Lamp::Core::lampConfig::getInstance().saveDataPath);
         std::filesystem::create_directories(Lamp::Core::lampConfig::getInstance().archiveDataPath);
         std::filesystem::create_directories(Lamp::Core::lampConfig::getInstance().ConfigDataPath);
         std::filesystem::create_directories(Lamp::Core::lampConfig::getInstance().DeploymentDataPath);
         std::filesystem::create_directories(Lamp::Core::lampConfig::getInstance().workingPaths);
-        for (Lamp::Game::gameControl *element: Lamp::Games::getInstance().gameList){
+        for (Lamp::Game::gameControl *element : Lamp::Games::getInstance().gameList)
+        {
             std::filesystem::create_directories(std::filesystem::path(Lamp::Core::lampConfig::getInstance().DeploymentDataPath + element->Ident().ReadableName));
             std::filesystem::create_directories(std::filesystem::path(Lamp::Core::lampConfig::getInstance().archiveDataPath + element->Ident().ReadableName + "/GameFiles"));
             std::filesystem::create_directories(Lamp::Core::lampConfig::getInstance().workingPaths + element->Ident().ReadableName);
             std::filesystem::create_directories(Lamp::Core::lampConfig::getInstance().ConfigDataPath + element->Ident().ReadableName);
         }
-        std::filesystem::create_directories(Lamp::Core::lampConfig::getInstance().workingPaths + Lamp::Games::getInstance().gameList[0]->Ident().ReadableName+"/MODS/");
-        std::filesystem::create_directories(Lamp::Core::lampConfig::getInstance().workingPaths + Lamp::Games::getInstance().gameList[0]->Ident().ReadableName+"/STEAM/");
-        std::filesystem::create_directories(Lamp::Core::lampConfig::getInstance().ConfigDataPath + Lamp::Games::getInstance().gameList[0]->Ident().ReadableName+"/MODS/");
-        std::filesystem::create_directories(Lamp::Core::lampConfig::getInstance().ConfigDataPath + Lamp::Games::getInstance().gameList[0]->Ident().ReadableName+"/STEAM/");
-    } catch (std::exception ex) {
+        std::filesystem::create_directories(Lamp::Core::lampConfig::getInstance().workingPaths + Lamp::Games::getInstance().gameList[0]->Ident().ReadableName + "/MODS/");
+        std::filesystem::create_directories(Lamp::Core::lampConfig::getInstance().workingPaths + Lamp::Games::getInstance().gameList[0]->Ident().ReadableName + "/STEAM/");
+        std::filesystem::create_directories(Lamp::Core::lampConfig::getInstance().ConfigDataPath + Lamp::Games::getInstance().gameList[0]->Ident().ReadableName + "/MODS/");
+        std::filesystem::create_directories(Lamp::Core::lampConfig::getInstance().ConfigDataPath + Lamp::Games::getInstance().gameList[0]->Ident().ReadableName + "/STEAM/");
+    }
+    catch (std::exception ex)
+    {
         Lamp::Core::Base::lampLog::getInstance().log("Could not create base directories", Lamp::Core::Base::lampLog::ERROR,
                                                      Lamp::Core::Base::lampLog::LMP_NODIRCREATION);
     }
@@ -180,14 +192,14 @@ int main(int, char**)
             if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
                 done = true;
 
-            if (event.type == SDL_DROPFILE) {
+            if (event.type == SDL_DROPFILE)
+            {
                 // A file has been dropped
-                char* droppedFile = event.drop.file;
+                char *droppedFile = event.drop.file;
                 Lamp::Core::FS::lampIO::fileDrop(droppedFile);
                 SDL_free(droppedFile);
             }
         }
-
 
         ImGui_ImplSDLRenderer2_NewFrame();
         ImGui_ImplSDL2_NewFrame();
@@ -199,10 +211,11 @@ int main(int, char**)
         SDL_RenderSetScale(renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
         SDL_SetRenderDrawColor(renderer, (Uint8)(clear_color.x * 255), (Uint8)(clear_color.y * 255), (Uint8)(clear_color.z * 255), (Uint8)(clear_color.w * 255));
         SDL_RenderClear(renderer);
-        ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
+        ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer);
         SDL_RenderPresent(renderer);
 
-        if(Menus.userRequestedQuit){
+        if (Menus.userRequestedQuit)
+        {
             done = true;
         }
     }
