@@ -6,18 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 option(USE_XDG_DIRECTORY "Use XDG directory to store data instead of the working directory" ON)
 
 add_executable(${PROJECT_NAME} main.cpp
-        third-party/imgui/imconfig.h
-        third-party/imgui/imgui.cpp
-        third-party/imgui/imgui.h
-        third-party/imgui/imgui_demo.cpp
-        third-party/imgui/imgui_draw.cpp
-        third-party/imgui/imgui_internal.h
-        third-party/imgui/imgui_tables.cpp
-        third-party/imgui/imgui_widgets.cpp
-        third-party/imgui/imstb_rectpack.h
-        third-party/imgui/imstb_textedit.h
-        third-party/imgui/imstb_truetype.h
-        third-party/json/json.hpp
         game-data/gameControl.h
         VERSION
         Lampray/Base/lampBase.h
@@ -40,8 +28,6 @@ add_executable(${PROJECT_NAME} main.cpp
         Lampray/Filesystem/lampTrack.cpp
         game-data/C77/C77.cpp
         game-data/C77/C77.h
-        third-party/imgui/imgui_impl_sdl2.cpp
-        third-party/imgui/imgui_impl_sdlrenderer2.cpp
         game-data/LHL/LHL.cpp
         game-data/LHL/LHL.h
         Lampray/Lang/lampLang.h
@@ -52,6 +38,35 @@ if(USE_XDG_DIRECTORY)
 endif(USE_XDG_DIRECTORY)
 
 find_package(PkgConfig REQUIRED)
+
+# Include the json package
+add_subdirectory(
+  ${CMAKE_SOURCE_DIR}/third-party/json
+  ${CMAKE_BINARY_DIR}/json-build
+  EXCLUDE_FROM_ALL
+)
+target_link_libraries(${PROJECT_NAME}
+  PRIVATE
+    json
+)
+target_include_directories(${PROJECT_NAME}
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}/third-party/json/lib
+)
+
+# Include the imgui package via FetchContent
+include(FetchContent)
+FetchContent_Declare(
+  imgui
+  GIT_REPOSITORY https://github.com/ocornut/imgui.git
+  GIT_TAG        v1.89.6
+)
+FetchContent_MakeAvailable(imgui)
+
+target_link_libraries(${PROJECT_NAME}
+  PRIVATE
+    imgui
+)
 
 # Include the bit7z package
 add_subdirectory(
