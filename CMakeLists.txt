@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.26)
 project(Lampray)
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 option(USE_XDG_DIRECTORY "Use XDG directory to store data instead of the working directory" ON)
 
 add_executable(${PROJECT_NAME}
@@ -44,6 +45,19 @@ add_executable(${PROJECT_NAME}
     game-data/LHL/LHL.h
     Lampray/Lang/lampLang.h
 )
+
+# Enable AddressSanitizer in Debug builds only
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  message(STATUS "Enabling AddressSanitizer")
+  target_compile_options(${PROJECT_NAME} PRIVATE
+    -fsanitize=address 
+    -fno-omit-frame-pointer
+  )
+  target_link_options(${PROJECT_NAME} PRIVATE
+    -fsanitize=address
+  )
+endif()
+
 if(USE_XDG_DIRECTORY)
   target_compile_definitions(${PROJECT_NAME} PUBLIC USE_XDG)
 endif()

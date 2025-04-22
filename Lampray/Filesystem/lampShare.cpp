@@ -13,17 +13,20 @@
 #include <bit7z/bitarchivereader.hpp>
 #include "../Control/lampControl.h"
 
-bool Lamp::Core::FS::lampShare::compressFile(const std::string& inputFile, const std::string& outputFile) {
+bool Lamp::Core::FS::lampShare::compressFile(const std::string &inputFile, const std::string &outputFile)
+{
     // Open the input file for reading
     std::ifstream inFile(inputFile, std::ios::binary);
-    if (!inFile) {
+    if (!inFile)
+    {
         std::cerr << "Error opening input file: " << inputFile << std::endl;
         return false;
     }
 
     // Open the output file for writing
     std::ofstream outFile(outputFile, std::ios::binary);
-    if (!outFile) {
+    if (!outFile)
+    {
         std::cerr << "Error opening output file: " << outputFile << std::endl;
         return false;
     }
@@ -42,7 +45,8 @@ bool Lamp::Core::FS::lampShare::compressFile(const std::string& inputFile, const
 
     int compressedSize = LZ4_compress_HC(inputBuffer.data(), compressedBuffer.data(), fileSize, maxCompressedSize, LZ4HC_CLEVEL_MAX);
 
-    if (compressedSize <= 0) {
+    if (compressedSize <= 0)
+    {
         std::cerr << "Compression failed." << std::endl;
         return false;
     }
@@ -52,16 +56,19 @@ bool Lamp::Core::FS::lampShare::compressFile(const std::string& inputFile, const
 
     return true;
 }
-bool Lamp::Core::FS::lampShare::decompressFile(const std::string& inputFile, const std::string& outputFile, std::uintmax_t volumeSize) {    // Open the input file for reading
+bool Lamp::Core::FS::lampShare::decompressFile(const std::string &inputFile, const std::string &outputFile, std::uintmax_t volumeSize)
+{ // Open the input file for reading
     std::ifstream inFile(inputFile, std::ios::binary);
-    if (!inFile) {
+    if (!inFile)
+    {
         std::cerr << "Error opening input file: " << inputFile << std::endl;
         return false;
     }
 
     // Open the output file for writing
     std::ofstream outFile(outputFile, std::ios::binary);
-    if (!outFile) {
+    if (!outFile)
+    {
         std::cerr << "Error opening output file: " << outputFile << std::endl;
         return false;
     }
@@ -70,12 +77,12 @@ bool Lamp::Core::FS::lampShare::decompressFile(const std::string& inputFile, con
     inFile.seekg(0, std::ios::end);
     std::streampos compressedSize = inFile.tellg();
 
-    if (compressedSize > 0) {
+    if (compressedSize > 0)
+    {
         compressedSize -= 1; // Drop the last byte from the size
     }
 
     inFile.seekg(0, std::ios::beg);
-
 
     std::vector<char> compressedBuffer(compressedSize);
     inFile.read(compressedBuffer.data(), compressedSize);
@@ -91,7 +98,8 @@ bool Lamp::Core::FS::lampShare::decompressFile(const std::string& inputFile, con
     // Perform the decompression
     int result = LZ4_decompress_safe(compressedBuffer.data(), decompressedBuffer.data(), compressedSize, decompressedSize);
 
-    if (result <= 0) {
+    if (result <= 0)
+    {
         std::cerr << "Decompression failed." << std::endl;
         return false;
     }
@@ -101,10 +109,12 @@ bool Lamp::Core::FS::lampShare::decompressFile(const std::string& inputFile, con
     return true;
 }
 
-void Lamp::Core::FS::lampShare::InsertXMLintoFile(const std::string& filename, const pugi::xml_node& metadata) {
+void Lamp::Core::FS::lampShare::InsertXMLintoFile(const std::string &filename, const pugi::xml_node &metadata)
+{
     // Open the file for reading and writing
     std::fstream file(filename, std::ios::in | std::ios::out);
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         std::cerr << "Error opening file: " << filename << std::endl;
         return;
     }
@@ -117,7 +127,8 @@ void Lamp::Core::FS::lampShare::InsertXMLintoFile(const std::string& filename, c
     std::string existingContent((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
     // Trim trailing newline character from existing content if present
-    if (!existingContent.empty() && existingContent.back() == '\n') {
+    if (!existingContent.empty() && existingContent.back() == '\n')
+    {
         existingContent.pop_back();
     }
 
@@ -126,7 +137,8 @@ void Lamp::Core::FS::lampShare::InsertXMLintoFile(const std::string& filename, c
 
     // Reopen the file for writing (truncate mode)
     file.open(filename, std::ios::out | std::ios::trunc);
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         std::cerr << "Error opening file for writing: " << filename << std::endl;
         return;
     }
@@ -134,10 +146,12 @@ void Lamp::Core::FS::lampShare::InsertXMLintoFile(const std::string& filename, c
     // Insert the XML data at the start of the file
     file << xmlStream.str() << existingContent;
 }
-void Lamp::Core::FS::lampShare::ExtractXMLfromFile(const std::string& filename, std::string& content) {
+void Lamp::Core::FS::lampShare::ExtractXMLfromFile(const std::string &filename, std::string &content)
+{
     // Open the file for reading
     std::ifstream inputFile(filename);
-    if (!inputFile.is_open()) {
+    if (!inputFile.is_open())
+    {
         std::cerr << "Error opening file: " << filename << std::endl;
         return;
     }
@@ -145,7 +159,8 @@ void Lamp::Core::FS::lampShare::ExtractXMLfromFile(const std::string& filename, 
     // Open a temporary file for writing
     std::string tempFilename = filename + ".temp";
     std::ofstream tempFile(tempFilename);
-    if (!tempFile.is_open()) {
+    if (!tempFile.is_open())
+    {
         std::cerr << "Error opening temporary file." << std::endl;
         inputFile.close();
         return;
@@ -156,17 +171,24 @@ void Lamp::Core::FS::lampShare::ExtractXMLfromFile(const std::string& filename, 
     std::string xmlContent;
     bool inXmlSection = false;
 
-    while (std::getline(inputFile, line)) {
-        if (line == "<metadata>") {
+    while (std::getline(inputFile, line))
+    {
+        if (line == "<metadata>")
+        {
             inXmlSection = true;
             xmlContent += line + "\n"; // Include the "<root>" tag
-        } else if (inXmlSection) {
+        }
+        else if (inXmlSection)
+        {
             xmlContent += line + "\n";
 
-            if (line == "</metadata>") {
+            if (line == "</metadata>")
+            {
                 inXmlSection = false;
             }
-        } else {
+        }
+        else
+        {
             // Write non-XML lines to the temporary file
             tempFile << line << "\n";
         }
@@ -177,7 +199,8 @@ void Lamp::Core::FS::lampShare::ExtractXMLfromFile(const std::string& filename, 
     tempFile.close();
 
     // Rename the temporary file to replace the original file
-    if (std::rename(tempFilename.c_str(), filename.c_str()) != 0) {
+    if (std::rename(tempFilename.c_str(), filename.c_str()) != 0)
+    {
         std::cerr << "Error renaming temporary file." << std::endl;
         return;
     }
@@ -185,15 +208,20 @@ void Lamp::Core::FS::lampShare::ExtractXMLfromFile(const std::string& filename, 
     // Load the extracted XML content into pugixml
     pugi::xml_document doc;
     pugi::xml_parse_result result = doc.load_string(xmlContent.c_str());
-    if (result) {
+    if (result)
+    {
         content = xmlContent; // The entire extracted content is the XML data
-    } else {
+    }
+    else
+    {
         std::cerr << "Error parsing extracted XML content." << std::endl;
     }
 }
 
-void Lamp::Core::FS::lampShare::importProfile() {
-    std::thread([] {
+void Lamp::Core::FS::lampShare::importProfile()
+{
+    std::thread([]
+                {
     Lamp::Core::lampControl::getInstance().inDeployment = true;
     Lamp::Core::lampControl::getInstance().deploymentStageTitle = "Importing Profile";
     Lamp::Core::lampControl::getInstance().deplopmentTracker = {0,11};
@@ -271,7 +299,7 @@ void Lamp::Core::FS::lampShare::importProfile() {
         Lamp::Core::lampControl::getInstance().deplopmentTracker = {7,11};
         bit7z::BitArchiveReader reader{lib, "import/lampPackage", bit7z::BitFormat::SevenZip};
         reader.test();
-        reader.extract(Lamp::Core::lampConfig::getInstance().archiveDataPath +
+        reader.extractTo(Lamp::Core::lampConfig::getInstance().archiveDataPath +
                        Lamp::Games::getInstance().currentGame->Ident().ReadableName + "/");
         Lamp::Core::lampControl::getInstance().deplopmentTracker = {8,11};
         std::vector<Base::lampMod::Mod *> newList;
@@ -319,11 +347,13 @@ void Lamp::Core::FS::lampShare::importProfile() {
     }catch (std::exception ex){
 
     }
-        Lamp::Core::lampControl::getInstance().inDeployment = false;
-    }).detach();
+        Lamp::Core::lampControl::getInstance().inDeployment = false; })
+        .detach();
 }
-void Lamp::Core::FS::lampShare::exportProfile(std::string profileNameS) {
-    std::thread([&profileNameS] {
+void Lamp::Core::FS::lampShare::exportProfile(std::string profileNameS)
+{
+    std::thread([&profileNameS]
+                {
     try {
         std::string profileName = profileNameS;
         Lamp::Core::lampControl::getInstance().inDeployment = true;
@@ -377,6 +407,6 @@ void Lamp::Core::FS::lampShare::exportProfile(std::string profileNameS) {
         );
     }catch(std::exception e){
 
-    }
-    }).detach();
+    } })
+        .detach();
 }
